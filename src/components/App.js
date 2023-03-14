@@ -114,7 +114,7 @@ function App() {
             />
           </form>
         </section>
-        <Errors numberOfErrors="" />
+        <Errors className={`dummy error-${getNumberOfErrors()}`}/>
       </main>
     </div>
   );

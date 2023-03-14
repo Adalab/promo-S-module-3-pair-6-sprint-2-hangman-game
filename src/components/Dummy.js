@@ -1,6 +1,6 @@
-const Errors = (props) => {
-  <section className={`dummy error-${getNumberOfErrors()}`}>
-    <span className="{props.numberOfErrors} eye"></span>
+const Errors = ({className}) => {
+  return <section className={className}>
+    <span className="error-13 eye"></span>
     <span className="error-12 eye"></span>
     <span className="error-11 line"></span>
     <span className="error-10 line"></span>
