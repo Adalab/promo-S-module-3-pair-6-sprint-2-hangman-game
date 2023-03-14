@@ -1,78 +1,135 @@
 import { useEffect, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
-// components
-import Dummy from './Dummy';
-import ErrorLetters from './ErrorLetters';
-import Footer from './Footer';
-import Form from './Form';
-import Header from './Header';
-import Instructions from './Instructions';
-import Loading from './Loading';
-import Options from './Options';
-import SolutionLetters from './SolutionLetters';
+
 // api
 import getWordFromApi from '../services/api';
 // styles
 import '../styles/App.scss';
+import '../styles/Dummy.scss';
+import '../styles/Letters.scss';
+import '../styles/Form.scss';
+import '../styles/Header.scss';
 
 function App() {
   const [word, setWord] = useState('');
   const [userLetters, setUserLetters] = useState([]);
   const [lastLetter, setLastLetter] = useState('');
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    getWordFromApi().then(word => {
+    getWordFromApi().then((word) => {
       setWord(word);
-      setLoading(false);
     });
   }, []);
 
   // events
 
-  const handleWord = value => {
-    setWord(value);
-    setUserLetters([]);
-    setLastLetter('');
+  const handleKeyDown = (ev) => {
+    // Sabrías decir para qué es esta línea
+    ev.target.setSelectionRange(0, 1);
   };
 
-  const handleLastLetter = value => {
-    value = value.toLocaleLowerCase();
-    setLastLetter(value);
-    userLetters.push(value);
-    setUserLetters([...userLetters]);
+  const handleChange = (ev) => {
+    let re = /^[a-zA-ZñÑá-úÁ-Ú´]$/; //add regular pattern 
+    if (re.test(ev.target.value) || ev.target.value === '') {
+      handleLastLetter(ev.target.value);
+    }
   };
 
-  // render helpers
+  const handleSubmit = (ev) => {
+    ev.preventDefault();
+  };
 
   const getNumberOfErrors = () => {
-    const errorLetters = userLetters.filter(letter => word.includes(letter) === false);
+    const errorLetters = userLetters.filter(
+      (letter) => word.includes(letter) === false
+    );
     return errorLetters.length;
   };
 
-  return (
-    <div className="page">
-      <Header />
-      <main className="main">
-        <section>
-          <Routes>
-            <Route path="/"
-              element={
-                <>
-                  <SolutionLetters word={word} userLetters={userLetters} />
-                  <ErrorLetters word={word} userLetters={userLetters} />
-                  <Form lastLetter={lastLetter} handleLastLetter={handleLastLetter} />
-                </>
-              } />
+  const renderSolutionLetters = () => {
+    const wordLetters = word.split('');
+    return wordLetters.map((letter, index) => {
+      const exists = userLetters.includes(letter.toLocaleLowerCase());
+      return (
+        <li key={index} className='letter'>
+          {exists ? letter : ''}
+        </li>
+      );
+    });
+  };
 
-            <Route path="/instructions" element={<Instructions />} />
-            <Route path="/options" element={<Options word={word} handleWord={handleWord} />} />
-          </Routes>
+  const renderErrorLetters = () => {
+    const errorLetters = userLetters.filter(
+      (letter) =>
+        word.toLocaleLowerCase().includes(letter.toLocaleLowerCase()) === false
+    );
+    return errorLetters.map((letter, index) => {
+      return (
+        <li key={index} className='letter'>
+          {letter}
+        </li>
+      );
+    });
+  };
+
+  const handleLastLetter = (value) => {
+    value = value.toLocaleLowerCase();
+    setLastLetter(value);
+
+    if (!userLetters.includes(value)) {
+      userLetters.push(value);
+      setUserLetters([...userLetters]);
+    }
+  };
+
+  return (
+    <div className='page'>
+      <header>
+        <h1 className='header__title'>Juego del ahorcado</h1>
+      </header>
+      <main className='main'>
+        <section>
+          <div className='solution'>
+            <h2 className='title'>Solución:</h2>
+            <ul className='letters'>{renderSolutionLetters()}</ul>
+          </div>
+          <div className='error'>
+            <h2 className='title'>Letras falladas:</h2>
+            <ul className='letters'>{renderErrorLetters()}</ul>
+          </div>
+          <form className='form' onSubmit={handleSubmit}>
+            <label className='title' htmlFor='last-letter'>
+              Escribe una letra:
+            </label>
+            <input
+              autoFocus
+              autoComplete='off'
+              className='form__input'
+              maxLength='1'
+              type='text'
+              name='last-letter'
+              id='last-letter'
+              value={lastLetter}
+              onKeyDown={handleKeyDown}
+              onChange={handleChange}
+            />
+          </form>
         </section>
-        <Dummy numberOfErrors={getNumberOfErrors()} />
+        <section className={`dummy error-${getNumberOfErrors()}`}>
+          <span className='error-13 eye'></span>
+          <span className='error-12 eye'></span>
+          <span className='error-11 line'></span>
+          <span className='error-10 line'></span>
+          <span className='error-9  line'></span>
+          <span className='error-8  line'></span>
+          <span className='error-7  line'></span>
+          <span className='error-6  head'></span>
+          <span className='error-5  line'></span>
+          <span className='error-4  line'></span>
+          <span className='error-3  line'></span>
+          <span className='error-2  line'></span>
+          <span className='error-1  line'></span>
+        </section>
       </main>
-      <Footer />
     </div>
   );
 }
