@@ -11,6 +11,7 @@ import Header from './Header';
 import Errors from './Dummy';
 import Solution from './Solution';
 import ErrorLetters from './ErrorLetters';
+import Form from './Form';
 
 function App() {
   const [word, setWord] = useState('');
@@ -25,32 +26,12 @@ function App() {
 
   // events
 
-  const handleKeyDown = (ev) => {
-    // Sabrías decir para qué es esta línea
-    ev.target.setSelectionRange(0, 1);
-  };
-
-  const handleChange = (ev) => {
-    let re = /^[a-zA-ZñÑá-úÁ-Ú´]$/; //add regular pattern
-    if (re.test(ev.target.value) || ev.target.value === '') {
-      handleLastLetter(ev.target.value);
-    }
-  };
-
-  const handleSubmit = (ev) => {
-    ev.preventDefault();
-  };
-
   const getNumberOfErrors = () => {
     const errorLetters = userLetters.filter(
       (letter) => word.includes(letter) === false
     );
     return errorLetters.length;
   };
-
-
-
-
 
   const handleLastLetter = (value) => {
     value = value.toLocaleLowerCase();
@@ -67,28 +48,14 @@ function App() {
       <Header />
       <main className="main">
         <section>
-          <Solution word={word} userLetters={userLetters}/>
-          <ErrorLetters word={word} userLetters={userLetters}/>
-
-          <form className="form" onSubmit={handleSubmit}>
-            <label className="title" htmlFor="last-letter">
-              Escribe una letra:
-            </label>
-            <input
-              autoFocus
-              autoComplete="off"
-              className="form__input"
-              maxLength="1"
-              type="text"
-              name="last-letter"
-              id="last-letter"
-              value={lastLetter}
-              onKeyDown={handleKeyDown}
-              onChange={handleChange}
-            />
-          </form>
+          <Solution word={word} userLetters={userLetters} />
+          <ErrorLetters word={word} userLetters={userLetters} />
+          <Form
+            lastLetter={lastLetter}
+            handleLastLetter={handleLastLetter}
+          ></Form>
         </section>
-        <Errors className={`dummy error-${getNumberOfErrors()}`}/>
+        <Errors className={`dummy error-${getNumberOfErrors()}`} />
       </main>
     </div>
   );
