@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link, Route, Routes } from 'react-router-dom';
 
 // api
 import getWordFromApi from '../services/api';
@@ -12,6 +13,9 @@ import Errors from './Dummy';
 import Solution from './Solution';
 import ErrorLetters from './ErrorLetters';
 import Form from './Form';
+import Footer from './Footer';
+import Instructions from './Instructions';
+import Options from './Options';
 
 function App() {
   const [word, setWord] = useState('');
@@ -47,16 +51,30 @@ function App() {
     <div className="page">
       <Header />
       <main className="main">
-        <section>
-          <Solution word={word} userLetters={userLetters} />
-          <ErrorLetters word={word} userLetters={userLetters} />
-          <Form
-            lastLetter={lastLetter}
-            handleLastLetter={handleLastLetter}
-          ></Form>
-        </section>
+        <Routes>
+          <Route
+            path="/instructions"
+            element={<Instructions></Instructions>}
+          ></Route>
+          <Route
+            path="/"
+            element={
+              <section>
+                <Solution word={word} userLetters={userLetters} />
+                <ErrorLetters word={word} userLetters={userLetters} />
+                <Form
+                  lastLetter={lastLetter}
+                  handleLastLetter={handleLastLetter}
+                ></Form>
+              </section>
+            }
+          ></Route>
+        </Routes>
         <Errors className={`dummy error-${getNumberOfErrors()}`} />
       </main>
+      <Footer>
+        <Link to="/"></Link>
+      </Footer>
     </div>
   );
 }
