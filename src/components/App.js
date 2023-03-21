@@ -16,6 +16,7 @@ import Form from './Form';
 import Footer from './Footer';
 import Instructions from './Instructions';
 import Options from './Options';
+import Loading from './Loading';
 
 function App() {
   const [word, setWord] = useState('');
@@ -56,6 +57,7 @@ function App() {
             path="/instructions"
             element={<Instructions></Instructions>}
           ></Route>
+          <Route path="/options" element={<Options></Options>}></Route>
           <Route
             path="/"
             element={
